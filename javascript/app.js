@@ -21,7 +21,7 @@ $(document).ready(function () {
         // Grabbing the user input from the form and removing the spaces before and after
         var trainName = $("#trainName").val().trim();
         var destination = $("#destination").val().trim();
-        var firstTrain = $("#trainTime").val().trim();
+        var firstTrain = monent($("#trainTime").val().trim(), "HH:mm");
         var frequency = $("#frequency").val().trim();
 
         database.ref().push({
@@ -38,38 +38,30 @@ $(document).ready(function () {
         // console.log(snapshot.val().destination);
         // console.log(snapshot.val().firstTrain);
         // console.log(snapshot.val().frequency);
-        var nTrain = (snapshot.val().name);
-        var nDestination = (snapshot.val().destination);
-        var nFirstTrain = (snapshot.val().firstTrain);
-        var nFrequency = (snapshot.val().frequency);
+        var name = (snapshot.val().name);
+        var destination = (snapshot.val().destination);
+        var firstTrain = (snapshot.val().firstTrain);
+        var frequency = (snapshot.val().frequency);
 
-        // Time for first train is also in military time hh:mm
-        var startTime = moment(nFirstTrain, "hh:mm");
 
         // Stating the current time
         var currentTime = moment();
 
         // Calculating the difference between the first train and now
-        var diffTime = moment().diff(moment(startTime), "minutes");
+        var diffTime = currentTime.diff(moment.unix(firstTrain), "minutes");
 
         // Time remaining = difference divided by train frequency
-        var timeRemain = diffTime % nFrequency;
+        var remaining = diffTime % frequency;
 
         // Calculating the time (minutes) the next available train will be
-        var minutesAway = nFrequency - timeRemain;
+        var minutesAway = frequency - remaining;
 
         // Next train = current time + minutes the next train will arrive 
-        var nextTrain = moment().add(minutesAway, "minutes");
+        var arrive = currentTime.add(minutesAway, "minutes").format("hh:mm A");
 
-        // Time that the train will arrive is formatted to military time.
-        var trainArrive = moment(nextTrain).format("hh:mm");
 
-        var appendTr = $("<tr>");
-        var nameTd = $("<td>").text(snapshot.val().name);
-        var destinationTd = $("<td>").text(snapshot.val().destination);
-        var frequencyTd = $("<td>").text(snapshot.val().frequency);
-        // var nextArrivalTd = $("<td>").text()
-        var minutesAwayTd = $("<td>").text(minutesAway);
+        $("#schedule").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrive +
+            "</td><td>" + minutesAway + "</td></tr>")
     });
 
 })
