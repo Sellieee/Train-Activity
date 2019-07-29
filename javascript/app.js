@@ -59,7 +59,7 @@ $(document).ready(function () {
         // Next train = current time + minutes the next train will arrive 
         var arrive = currentTime.add(minutesAway, "minutes").format("hh:mm A");
 
-
+        // Appending the user inputs to the rows in #schedule
         $("#schedule").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrive +
             "</td><td>" + minutesAway + "</td></tr>")
     });
