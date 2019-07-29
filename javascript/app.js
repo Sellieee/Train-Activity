@@ -34,12 +34,42 @@ $(document).ready(function () {
 
     database.ref().on("child_added", function (snapshot) {
         // Test to see if the input values from the form are displaying correctly in console.log
-        console.log(snapshot.val());
-        console.log(snapshot.val().name);
-        console.log(snapshot.val().destination);
-        console.log(snapshot.val().firstTrain);
-        console.log(snapshot.val().frequency);
-    })
+        // console.log(snapshot.val().name);
+        // console.log(snapshot.val().destination);
+        // console.log(snapshot.val().firstTrain);
+        // console.log(snapshot.val().frequency);
+        var nTrain = (snapshot.val().name);
+        var nDestination = (snapshot.val().destination);
+        var nFirstTrain = (snapshot.val().firstTrain);
+        var nFrequency = (snapshot.val().frequency);
 
+        // Time for first train is also in military time hh:mm
+        var startTime = moment(nFirstTrain, "hh:mm");
+
+        // Stating the current time
+        var currentTime = moment();
+
+        // Calculating the difference between the first train and now
+        var diffTime = moment().diff(moment(startTime), "minutes");
+
+        // Time remaining = difference divided by train frequency
+        var timeRemain = diffTime % nFrequency;
+
+        // Calculating the time (minutes) the next available train will be
+        var minutesAway = nFrequency - timeRemain;
+
+        // Next train = current time + minutes the next train will arrive 
+        var nextTrain = moment().add(minutesAway, "minutes");
+
+        // Time that the train will arrive is formatted to military time.
+        var trainArrive = moment(nextTrain).format("hh:mm");
+
+        var appendTr = $("<tr>");
+        var nameTd = $("<td>").text(snapshot.val().name);
+        var destinationTd = $("<td>").text(snapshot.val().destination);
+        var frequencyTd = $("<td>").text(snapshot.val().frequency);
+        // var nextArrivalTd = $("<td>").text()
+        var minutesAwayTd = $("<td>").text(minutesAway);
+    });
 
 })
