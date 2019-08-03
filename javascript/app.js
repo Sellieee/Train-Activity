@@ -21,7 +21,7 @@ $(document).ready(function () {
         // Grabbing the user input from the form and removing the spaces before and after
         var trainName = $("#trainName").val().trim();
         var destination = $("#destination").val().trim();
-        var firstTrain = monent($("#trainTime").val().trim(), "HH:mm");
+        var firstTrain = $("#trainTime").val().trim();
         var frequency = $("#frequency").val().trim();
 
         database.ref().push({
@@ -47,17 +47,20 @@ $(document).ready(function () {
         // Stating the current time
         var currentTime = moment();
 
+        // First Train in military time
+        var firstTrainMilitary = moment(snapshot.val().firstTrain, "HH:mm A").subtract(1, "years");
+
         // Calculating the difference between the first train and now
-        var diffTime = currentTime.diff(moment.unix(firstTrain), "minutes");
+        var diffTime = currentTime.diff(moment(firstTrainMilitary), "minutes");
 
         // Time remaining = difference divided by train frequency
-        var remaining = diffTime % frequency;
+        var remaining = diffTime % parseInt(snapshot.val().frequency, 10);
 
         // Calculating the time (minutes) the next available train will be
-        var minutesAway = frequency - remaining;
+        var minutesAway = parseInt(snapshot.val().frequency, 10) - remaining;
 
         // Next train = current time + minutes the next train will arrive 
-        var arrive = currentTime.add(minutesAway, "minutes").format("hh:mm A");
+        var arrive = currentTime.add(minutesAway, "minutes").format("HH:mm");
 
         // Appending the user inputs to the rows in #schedule
         $("#schedule").append("<tr><td>" + name + "</td><td>" + destination + "</td><td>" + frequency + "</td><td>" + arrive +
